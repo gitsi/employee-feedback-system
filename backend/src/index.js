@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 
@@ -11,6 +12,7 @@ const app = express();
 connectDB();
 
 // Middleware
+app.use(helmet());
 app.use(cors());
 app.use(express.json());
 

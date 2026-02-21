@@ -10,6 +10,8 @@ A full-stack MERN application designed for professional colleague feedback with 
     - **Soft Delete**: Records are marked as deleted but retained to prevent rate-limit bypassing.
 - **Dynamic Profile Views**: Received vs. Given feedback tracking with average rating calculations.
 - **Real-time Team Pulse**: A home screen activity feed showing the 20 most recent interactions.
+- **Multi-Layered Security**: Integrated **Helmet** for secure headers and **Express-Validator** for server-side sanitization.
+- **Modular Component Architecture**: Decoupled large page files into reusable sub-components.
 - **High-End Aesthetics**: Dark-mode glassmorphism UI with smooth transitions and custom validation.
 
 ---
