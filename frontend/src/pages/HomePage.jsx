@@ -17,6 +17,7 @@ const HomePage = () => {
     const [newEmployee, setNewEmployee] = useState({ name: '', email: '', department: '' });
     const [createError, setCreateError] = useState('');
     const [fieldErrors, setFieldErrors] = useState({});
+    const [error, setError] = useState(''); // Graceful error state
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
@@ -24,12 +25,14 @@ const HomePage = () => {
 
     const fetchEmployees = useCallback(async (page = 1, search = '') => {
         try {
+            setError('');
             const res = await API.get(`/employees?page=${page}&limit=10&search=${search}`);
             setEmployees(res.data.employees);
             setTotalPages(res.data.totalPages);
             setCurrentPage(res.data.currentPage);
         } catch (err) {
             console.error(err);
+            setError('Unable to load employees. Please ensure the backend is running.');
         }
     }, []);
 
@@ -140,7 +143,15 @@ const HomePage = () => {
                 onPageChange={setCurrentPage}
             />
 
-            {employees.length === 0 && (
+            {error && (
+                <div style={{ textAlign: 'center', marginTop: '4rem' }}>
+                    <h2 className="mb-4" style={{ color: 'var(--error)' }}>Connection Error</h2>
+                    <p className="mb-4">{error}</p>
+                    <button onClick={() => window.location.reload()} className="btn-primary">Retry</button>
+                </div>
+            )}
+
+            {!error && employees.length === 0 && (
                 <div style={{ textAlign: 'center', marginTop: '4rem', color: 'var(--text-muted)' }}>
                     No employees found.
                 </div>
