@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import API from '../services/api';
 import { Search, UserPlus } from 'lucide-react';
-import EmployeeCard from '../components/EmployeeCard';
 import Pagination from '../components/Pagination';
-import ActivityFeed from '../components/ActivityFeed';
-import CreateEmployeeModal from '../components/CreateEmployeeModal';
+import EmployeeCreate from '../components/EmployeeCreate';
+import EmployeeList from '../components/EmployeeList';
+import FeedbackActivityList from '../components/FeedbackActivityList';
+import useDebounce from '../hooks/useDebounce';
 
 const DEPARTMENTS = ['Engineering', 'Design', 'HR', 'Marketing', 'Sales', 'Product', 'Operations', 'Finance', 'Legal'];
 
@@ -12,7 +13,7 @@ const HomePage = () => {
     const [employees, setEmployees] = useState([]);
     const [recentFeedbacks, setRecentFeedbacks] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [debouncedTerm, setDebouncedTerm] = useState('');
+    const debouncedTerm = useDebounce(searchTerm, 500);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [newEmployee, setNewEmployee] = useState({ name: '', email: '', department: '' });
     const [createError, setCreateError] = useState('');
@@ -57,13 +58,9 @@ const HomePage = () => {
         fetchRecentFeedback();
     }, [fetchRecentFeedback]);
 
-    // Debounced search logic
+    // Reset to first page when search changes
     useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedTerm(searchTerm);
-            setCurrentPage(1); // Reset to first page on search
-        }, 500);
-        return () => clearTimeout(handler);
+        setCurrentPage(1);
     }, [searchTerm]);
 
     const validate = () => {
@@ -104,9 +101,6 @@ const HomePage = () => {
         }
     };
 
-    // Simplified: Backend now handles filtering and pagination
-    const filteredEmployees = employees;
-
     return (
         <div className="container">
             <div className="flex-between mb-4">
@@ -132,7 +126,7 @@ const HomePage = () => {
                 </div>
             </div>
 
-            <CreateEmployeeModal
+            <EmployeeCreate
                 show={showCreateForm}
                 onClose={() => setShowCreateForm(false)}
                 newEmployee={newEmployee}
@@ -144,11 +138,11 @@ const HomePage = () => {
                 departments={DEPARTMENTS}
             />
 
-            <div className="grid">
-                {employees.map(emp => (
-                    <EmployeeCard key={emp._id} emp={emp} />
-                ))}
-            </div>
+            <EmployeeList
+                employees={employees}
+                isLoading={!error && employees.length === 0}
+                error={error}
+            />
 
             <Pagination
                 currentPage={currentPage}
@@ -156,21 +150,7 @@ const HomePage = () => {
                 onPageChange={setCurrentPage}
             />
 
-            {error && (
-                <div style={{ textAlign: 'center', marginTop: '4rem' }}>
-                    <h2 className="mb-4" style={{ color: 'var(--error)' }}>Connection Error</h2>
-                    <p className="mb-4">{error}</p>
-                    <button onClick={() => window.location.reload()} className="btn-primary">Retry</button>
-                </div>
-            )}
-
-            {!error && employees.length === 0 && (
-                <div style={{ textAlign: 'center', marginTop: '4rem', color: 'var(--text-muted)' }}>
-                    No employees found.
-                </div>
-            )}
-
-            <ActivityFeed feedbacks={recentFeedbacks} />
+            <FeedbackActivityList feedbacks={recentFeedbacks} />
         </div>
     );
 };

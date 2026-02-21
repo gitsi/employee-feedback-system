@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FeedbackForm = ({
+const FeedbackCreate = ({
     onSubmit,
     reviewerName,
     allEmployees,
@@ -48,7 +48,7 @@ const FeedbackForm = ({
                 required
             ></textarea>
 
-            {error && <p style={{ color: 'var(--error)', marginBottom: '1rem', fontSize: '0.9rem' }}>{error}</p>}
+            {error && <p className="error-text">{error}</p>}
             {success && <p style={{ color: 'var(--success)', marginBottom: '1rem', fontSize: '0.9rem' }}>{success}</p>}
 
             <button type="submit" className="btn-primary" style={{ width: '100%', opacity: selectedRecipient ? 1 : 0.5 }} disabled={!selectedRecipient}>
@@ -58,4 +58,4 @@ const FeedbackForm = ({
     );
 };
 
-export default FeedbackForm;
+export default FeedbackCreate;

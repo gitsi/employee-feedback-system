@@ -1,7 +1,7 @@
 import React from 'react';
 import { Star } from 'lucide-react';
 
-const ActivityFeed = ({ feedbacks }) => {
+const FeedbackActivityList = ({ feedbacks }) => {
     return (
         <div className="mt-8 pt-4" style={{ borderTop: '1px solid var(--border-color)' }}>
             <h2 className="mb-4">Recent Team Activity</h2>
@@ -34,4 +34,4 @@ const ActivityFeed = ({ feedbacks }) => {
     );
 };
 
-export default ActivityFeed;
+export default FeedbackActivityList;

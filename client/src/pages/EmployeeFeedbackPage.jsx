@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import API from '../services/api';
 import { Star, ArrowLeft } from 'lucide-react';
-import FeedbackForm from '../components/FeedbackForm';
-import FeedbackItem from '../components/FeedbackItem';
+import FeedbackCreate from '../components/FeedbackCreate';
+import FeedbackList from '../components/FeedbackList';
 
-const ProfilePage = () => {
+const EmployeeFeedbackPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [employee, setEmployee] = useState(null);
@@ -174,7 +174,7 @@ const ProfilePage = () => {
                     </div>
                     <hr style={{ margin: '1.5rem 0', borderColor: 'var(--border-color)' }} />
 
-                    <FeedbackForm
+                    <FeedbackCreate
                         onSubmit={handleSubmit}
                         reviewerName={employee.name}
                         allEmployees={allEmployees}
@@ -189,46 +189,26 @@ const ProfilePage = () => {
                     />
                 </div>
 
-                {/* Feedback List */}
+                {/* Feedback Lists */}
                 <div>
-                    <h2 className="mb-4 flex-between">
-                        Feedback Received
-                        <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{feedbacks.length} Total</span>
-                    </h2>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        {feedbacks.map(feed => (
-                            <FeedbackItem
-                                key={feed._id}
-                                feed={feed}
-                                showRecipient={false}
-                                showDelete={false}
-                            />
-                        ))}
-                        {feedbacks.length === 0 && (
-                            <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginTop: '2rem' }}>No feedback received yet.</p>
-                        )}
-                    </div>
+                    <FeedbackList
+                        feedbacks={feedbacks}
+                        title="Feedback Received"
+                        emptyMessage="No feedback received yet."
+                        showRecipient={false}
+                        showDelete={false}
+                    />
 
                     <div className="mt-4 pt-4" style={{ borderTop: '1px solid var(--border-color)' }}>
-                        <h2 className="mb-4 flex-between">
-                            Feedback Given
-                            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{givenFeedbacks.length} Total</span>
-                        </h2>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            {givenFeedbacks.map(feed => (
-                                <FeedbackItem
-                                    key={feed._id}
-                                    feed={feed}
-                                    showRecipient={true}
-                                    showDelete={true}
-                                    onDelete={handleDelete}
-                                    currentUserId={id}
-                                />
-                            ))}
-                            {givenFeedbacks.length === 0 && (
-                                <p style={{ color: 'var(--text-muted)', textAlign: 'center' }}>No given feedback yet.</p>
-                            )}
-                        </div>
+                        <FeedbackList
+                            feedbacks={givenFeedbacks}
+                            title="Feedback Given"
+                            emptyMessage="No given feedback yet."
+                            showRecipient={true}
+                            showDelete={true}
+                            onDelete={handleDelete}
+                            currentUserId={id}
+                        />
                     </div>
                 </div>
             </div>
@@ -236,4 +216,4 @@ const ProfilePage = () => {
     );
 };
 
-export default ProfilePage;
+export default EmployeeFeedbackPage;

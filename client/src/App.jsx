@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
-const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const EmployeeFeedbackPage = lazy(() => import('./pages/EmployeeFeedbackPage'));
 
 function App() {
   return (
@@ -12,7 +12,7 @@ function App() {
       <Suspense fallback={<div className="container">Loading...</div>}>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/employee/:id" element={<ProfilePage />} />
+          <Route path="/employee/:id" element={<EmployeeFeedbackPage />} />
         </Routes>
       </Suspense>
     </Router>

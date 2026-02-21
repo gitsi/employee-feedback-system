@@ -9,7 +9,7 @@ const Navbar = () => {
             <div className="container flex-between">
                 <Link to="/" style={{ textDecoration: 'none', color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <Star className="text-gradient" />
-                    <h2 className="text-gradient">Feedback Hub</h2>
+                    <h2 className="text-gradient">Employee Feedback System</h2>
                 </Link>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
