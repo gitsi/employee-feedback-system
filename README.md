@@ -1,78 +1,127 @@
-# 🚀 Employee Feedback Hub - Hackathon Edition
+# 🚀 Employee Feedback System
 
-A full-stack MERN application designed for professional colleague feedback with strict security constraints and high-performance directory management.
-
-## 🌟 Key Features
-- **Modern Employee Directory**: Paginated directory (10 per page) with real-time global search.
-- **Secure Feedback Logic**:
-    - **No Self-Feedback**: Prohibited at both frontend and backend levels.
-    - **24-Hour Rate Limit**: Strictly enforced between unique pairs of givers and receivers.
-    - **Soft Delete**: Records are marked as deleted but retained to prevent rate-limit bypassing.
-- **Dynamic Profile Views**: Received vs. Given feedback tracking with average rating calculations.
-- **Real-time Team Pulse**: A home screen activity feed showing the 20 most recent interactions.
-- **Multi-Layered Security**: Integrated **Helmet**, **Express-Validator**, and **API Rate Limiting** for enterprise-grade protection.
-- **DB Optimization**: **Text Indexing** on employee names and departments for lightning-fast search performance.
-- **Payload Protection**: Strict limits on incoming request sizes to prevent server overflow attacks.
-- **Modular Component Architecture**: Decoupled large page files into reusable sub-components.
-- **High-End Aesthetics**: Dark-mode glassmorphism UI with smooth transitions and custom validation.
+A professional, high-performance MERN stack application designed for peer-to-peer feedback. This system focuses on security, scalability, and clean modular architecture, making it an ideal showcase for modern web development practices.
 
 ---
 
-## 🏗️ Technical Architecture (MVC)
-The project is built using the **Model-View-Controller** pattern for clean separation of concerns.
-
-### Folder Structure
-- `backend/`: Node.js, Express, and MongoDB (Mongoose) logic.
-- `frontend/`: React 19, Vite, and Axios for a lightning-fast UI.
-
----
-
-## 📡 API Specifications (REST)
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/employees` | Create new employee profile |
-| `GET` | `/api/employees` | Search & Paginated directory |
-| `POST` | `/api/feedback` | Submit rating & comments |
-| `DELETE` | `/api/feedback/:id` | Soft delete own feedback |
+## 📖 1. Usecase
+The **Employee Feedback System** serves as a centralized hub for organizations to maintain a transparent and constructive feedback culture. 
+- **Peer Recognition**: Allows team members to acknowledge each other's contributions.
+- **Performance Tracking**: Provides a consolidated view of an employee's received and given feedback.
+- **Data-Driven Insights**: Calculates real-time average ratings to help managers identify top performers.
+- **Accountability**: Ensures all feedback is attributed to a reviewer while maintaining professional standards.
 
 ---
 
-## 🛠️ Installation & Setup
+## 🏗️ 2. Architecture & Design
+The system follows the **SoC (Separation of Concerns)** principle with a clean two-tier architecture.
 
-### Prerequisites
-- Node.js (v18+)
-- MongoDB (Running locally or Atlas)
+### **Server (Node.js/Express/MongoDB)**
+- **Pattern**: MVC (Model-View-Controller) for decoupled logic.
+- **Models**: Mongoose schemas with strict validation and custom text-indexes for search.
+- **Routes**: RESTful API design with semantic endpoint naming (`/api/employees`, `/api/feedback`).
+- **Middleware**: Integrated security layers (Helmet, Rate Limiting) and custom payload protection.
 
-### 1. Project Organization
-This repo contains two main folders: `backend` and `frontend`.
+### **Client (React/Vite)**
+- **Atomic Components**: Small, reusable UI units (Buttons, Inputs, Cards).
+- **Pages (Orchestrators)**: High-level views (HomePage, EmployeeFeedbackPage) that manage data flow.
+- **Custom Hooks**: Business logic extracted into reusable hooks (e.g., `useDebounce` for search).
+- **Service Layer**: Dedicated `API.js` service for centralized Axios configurations.
 
-### 2. Backend Setup
+---
+
+## 💎 3. Core Values
+### ⚡ **Optimized**
+- **Server-Side Pagination**: Only fetches data chunks needed for the current view, reducing memory footprint.
+- **Text Indexing**: MongoDB text indexes on Name and Department fields for ultra-fast search results.
+- **Debounced Interaction**: Search inputs are debounced to prevent unnecessary API hammering.
+
+### ♻️ **Reusable**
+- **Modular CSS**: Shared variables and utility classes in `index.css`.
+- **Generic Components**: Components like `FeedbackList` are built to be context-agnostic.
+- **Custom Hooks**: The `useDebounce` hook can be dropped into any other project.
+
+### 🛡️ **Secure**
+- **No Self-Feedback**: Business logic prevents employees from rating themselves.
+- **Rate Limiting**: Integrated 24-hour limit on feedback between pairs to prevent spam.
+- **Soft Deletes**: Ensures data integrity and prevents bypassing rate limits through deletions.
+- **Security Headers**: Helmet integration to protect against common web vulnerabilities.
+
+### 🛡️ **Reliable & Efficient**
+- **Graceful Error Handling**: Custom UI feedback for connection drops or rate-limit triggers.
+- **RESTful State**: Stateless backend ensuring predictable behavior and easier horizontal scaling.
+
+---
+
+## 📚 4. Topics Covered
+
+### **React (Frontend)**
+- **Modern Hooks**: `useState`, `useEffect`, `useCallback`, `useMemo`, `useParams`.
+- **Custom Hooks**: Extraction of side-effect logic (e.g., `useDebounce`).
+- **Conditional Rendering**: Handling loading, error, and empty states.
+- **Advanced CSS**: Dark-mode glassmorphism and smooth micro-animations.
+
+### **Node.js & Express (Backend)**
+- **Middleware Integration**: CORS, Helmet, Rate-Limiting.
+- **RESTful API**: CRUD operations, URL parameters, and Query filtering.
+- **Validation**: Schema-level and middleware-level request validation.
+
+### **MongoDB (Database)**
+- **Schema Design**: Relational-style modeling using ObjectIDs.
+- **Indexing**: Creating and utilizing Text Indexes for performance.
+- **Soft Delete Pattern**: Flag-based deletion for data retention.
+
+---
+
+## 🛠️ 5. Setup Guide
+
+### **Prerequisites**
+- Node.js (v18 or higher)
+- MongoDB instance (Local or Atlas)
+
+### **Step 1: Clone and Install**
 ```bash
-cd backend
-npm install
-# Create a .env file with your MONGO_URI and PORT
+# Clone the repository
+git clone https://github.com/gitsi/employee-feedback-system.git
+cd employee-feedback-system
+
+# Install Frontend Dependencies
+cd client && npm install
+
+# Install Backend Dependencies
+cd ../server && npm install
+```
+
+### **Step 2: Environment Setup**
+Create a `.env` file in the `server/` directory:
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+```
+
+### **Step 3: Seed Data (Optional)**
+```bash
+cd server
+npm run seed
+```
+
+### **Step 4: Run the Application**
+```bash
+# Terminal 1 (Server)
+cd server
+npm run dev
+
+# Terminal 2 (Client)
+cd client
 npm run dev
 ```
 
-### 3. Frontend Setup
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
 ---
 
-## 🛡️ Interview Talking Points
-- **Why Soft Delete?**: We used soft deletion to ensure the 24-hour feedback rule is bulletproof. Even if a user deletes their post, the system "remembers" it to prevent them from immediately re-submitting to the same person.
-- **Optimization**: We implemented **Debouncing** on the search bar to save server resources and **Server-side Pagination** to handle thousands of employees efficiently.
-- **Clean Code**: Custom inline validation was used to replace default browser tooltips for a more professional, cohesive UX.
+## 🚀 6. Terminal Commands
+- **Install All**: `npm install` (in both directories)
+- **Run Dev**: `npm run dev`
+- **Build Client**: `npm run build`
+- **Seed DB**: `node seed.js` (inside `server/`)
 
----
-
-### 📦 Tech Stack
-- **Frontend**: React 19, Vite, Axios, Lucide Icons, Vanilla CSS.
-- **Backend**: Node.js, Express 5, Mongoose 9, CORS, Dotenv.
-- **Database**: MongoDB.
-
-🏆 *Built for the Hackathon Selection Process.*
+🏆 *Built with precision for professional peer-to-peer feedback.*
