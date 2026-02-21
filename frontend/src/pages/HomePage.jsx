@@ -41,7 +41,11 @@ const HomePage = () => {
             const res = await API.get('/feedback');
             setRecentFeedbacks(res.data);
         } catch (err) {
-            console.error(err);
+            console.error("Recent Feedback Fetch Error:", err);
+            // We set the global error if the main backend connection seems failed
+            if (!err.response) {
+                setError('Unable to load activity feed. Connection lost.');
+            }
         }
     }, []);
 
