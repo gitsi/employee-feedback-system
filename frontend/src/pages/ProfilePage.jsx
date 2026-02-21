@@ -17,10 +17,14 @@ const ProfilePage = () => {
     const [formData, setFormData] = useState({ rating: 5, comment: '' });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+    const [notFound, setNotFound] = useState(false);
 
     useEffect(() => {
         setFormData({ rating: 5, comment: '' });
         setSelectedRecipient('');
+        setNotFound(false);
+        setIsLoading(true);
     }, [id]);
 
     useEffect(() => {
@@ -38,8 +42,15 @@ const ProfilePage = () => {
                 setFeedbacks(feedRes.data);
                 setAvgRating(avgRes.data.averageRating || 0);
                 setAllEmployees(allRes.data.employees || []); // Extract from .employees
+                setIsLoading(false);
             } catch (err) {
                 console.error(err);
+                if (err.response?.status === 404) {
+                    setNotFound(true);
+                } else {
+                    setError('Unable to load profile. Please ensure the backend is running.');
+                }
+                setIsLoading(false);
             }
         };
         fetchData();
@@ -58,8 +69,6 @@ const ProfilePage = () => {
         };
         fetchUserData();
     }, [id]);
-
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -100,7 +109,25 @@ const ProfilePage = () => {
         }
     };
 
-    if (!employee) return <div className="container">Loading...</div>;
+    if (isLoading) return <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>Loading...</div>;
+
+    if (notFound) return (
+        <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>
+            <h2 className="mb-4">Employee Not Found</h2>
+            <p className="mb-4" style={{ color: 'var(--text-muted)' }}>The employee ID may have changed after seeding the database.</p>
+            <button onClick={() => navigate('/')} className="btn-primary">Back to Home</button>
+        </div>
+    );
+
+    if (error && !employee) return (
+        <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>
+            <h2 className="mb-4" style={{ color: 'var(--error)' }}>Connection Error</h2>
+            <p className="mb-4">{error}</p>
+            <button onClick={() => window.location.reload()} className="btn-primary">Retry</button>
+        </div>
+    );
+
+    if (!employee) return null;
 
     return (
         <div className="container">
