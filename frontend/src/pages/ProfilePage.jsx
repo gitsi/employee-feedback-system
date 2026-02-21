@@ -66,8 +66,10 @@ const ProfilePage = () => {
 
                     if (err.response?.status === 404) {
                         setNotFound(true);
+                    } else if (err.response?.status === 429) {
+                        setProfileError('Security: Too many requests. Please wait a minute and try again.');
                     } else {
-                        setProfileError('Unable to load full profile data. Please try again.');
+                        setProfileError('Unable to load profile data. A server/connection error occurred.');
                     }
                     setIsLoading(false);
                 }
