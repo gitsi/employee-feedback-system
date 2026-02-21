@@ -10,6 +10,11 @@ const employees = [
     { name: 'Charlie Davis', email: 'charlie@example.com', department: 'Product' },
     { name: 'Diana Prince', email: 'diana@example.com', department: 'Engineering' },
     { name: 'Ethan Hunt', email: 'ethan@example.com', department: 'Operations' },
+    { name: 'Fiona Gallagher', email: 'fiona@example.com', department: 'HR' },
+    { name: 'George Miller', email: 'george@example.com', department: 'Marketing' },
+    { name: 'Hannah Abbott', email: 'hannah@example.com', department: 'Sales' },
+    { name: 'Ian Wright', email: 'ian@example.com', department: 'Engineering' },
+    { name: 'Jack Sparrow', email: 'jack@example.com', department: 'Product' },
 ];
 
 const seedDB = async () => {
