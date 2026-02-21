@@ -31,7 +31,7 @@ exports.submitFeedback = async (req, res) => {
 
 exports.getAllFeedback = async (req, res) => {
     try {
-        const feedback = await Feedback.find({ isDeleted: false })
+        const feedback = await Feedback.find({ isDeleted: { $ne: true } })
             .populate('givenBy', 'name')
             .populate('givenTo', 'name')
             .sort({ createdAt: -1 })
@@ -44,7 +44,7 @@ exports.getAllFeedback = async (req, res) => {
 
 exports.getFeedbackReceived = async (req, res) => {
     try {
-        const feedback = await Feedback.find({ givenTo: req.params.employeeId, isDeleted: false })
+        const feedback = await Feedback.find({ givenTo: req.params.employeeId, isDeleted: { $ne: true } })
             .populate('givenBy', 'name email')
             .sort({ createdAt: -1 });
         res.json(feedback);
@@ -70,7 +70,7 @@ exports.getAverageRating = async (req, res) => {
             {
                 $match: {
                     givenTo: new (require('mongoose').Types.ObjectId)(req.params.employeeId),
-                    isDeleted: false
+                    isDeleted: { $ne: true }
                 }
             },
             { $group: { _id: "$givenTo", averageRating: { $avg: "$rating" } } }

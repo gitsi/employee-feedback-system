@@ -36,8 +36,10 @@ exports.getEmployees = async (req, res) => {
             ]
         } : {};
 
+        console.log(`Fetching employees: page=${page}, search="${search}"`);
         const total = await Employee.countDocuments(query);
         const employees = await Employee.find(query).skip(skip).limit(limit);
+        console.log(`Found ${employees.length} employees (Total: ${total})`);
 
         res.json({
             employees,
@@ -46,6 +48,7 @@ exports.getEmployees = async (req, res) => {
             currentPage: page
         });
     } catch (err) {
+        console.error("Get Employees Error:", err);
         res.status(500).json({ message: err.message });
     }
 };

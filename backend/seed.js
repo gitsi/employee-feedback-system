@@ -20,9 +20,13 @@ const employees = [
 const seedDB = async () => {
     try {
         await mongoose.connect(process.env.MONGODB_URI);
+
+        // Clear both collections to avoid dead references
+        await require('./src/models/Feedback').deleteMany();
         await Employee.deleteMany();
+
         await Employee.insertMany(employees);
-        console.log('Database Seeded!');
+        console.log('Database Seeded (Employees & Feedback reset)!');
         process.exit();
     } catch (err) {
         console.error(err);

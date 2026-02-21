@@ -22,10 +22,24 @@ const limiter = rateLimit({
 connectDB();
 
 // Middleware
+app.use(cors());
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+});
 app.use(limiter);
 app.use(helmet());
-app.use(cors());
-app.use(express.json({ limit: '10kb' })); // Payload protection
+app.use(express.json({ limit: '10kb' }));
+
+// Health Check / Debug Route
+app.get('/api/health', async (req, res) => {
+    try {
+        const count = await require('./models/Employee').countDocuments();
+        res.json({ status: 'ok', employeeCount: count });
+    } catch (err) {
+        res.status(500).json({ status: 'error', message: err.message });
+    }
+});
 
 // Routes
 app.use('/api/employees', require('./routes/employeeRoutes'));
