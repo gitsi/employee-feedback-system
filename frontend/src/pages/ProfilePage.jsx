@@ -16,65 +16,66 @@ const ProfilePage = () => {
     const [selectedRecipient, setSelectedRecipient] = useState('');
     const [formData, setFormData] = useState({ rating: 5, comment: '' });
     const [error, setError] = useState('');
+    const [profileError, setProfileError] = useState(''); // Separate profile loading error
     const [success, setSuccess] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [notFound, setNotFound] = useState(false);
 
     useEffect(() => {
-        setEmployee(null); // Clear previous profile to avoid "ghost" data
-        setFeedbacks([]);
-        setGivenFeedbacks([]);
-        setFormData({ rating: 5, comment: '' });
-        setSelectedRecipient('');
-        setError('');
-        setSuccess('');
-        setNotFound(false);
-        setIsLoading(true);
-    }, [id]);
-
-    useEffect(() => {
-        if (!id) return;
+        let ignore = false;
 
         const fetchData = async () => {
+            if (!id) return;
+
+            // Initial UI state reset
+            setEmployee(null);
+            setFeedbacks([]);
+            setGivenFeedbacks([]);
+            setAvgRating(0);
+            setProfileError('');
+            setError('');
+            setSuccess('');
+            setNotFound(false);
+            setIsLoading(true);
+
             try {
                 // Fetch specific employee and a list for the dropdown
-                const [empRes, feedRes, avgRes, allRes] = await Promise.all([
+                const [empRes, feedRes, avgRes, allRes, givenRes] = await Promise.all([
                     API.get(`/employees/${id}`),
                     API.get(`/feedback/received/${id}`),
                     API.get(`/feedback/average/${id}`),
-                    API.get(`/employees?limit=100`) // Get more for the dropdown
+                    API.get(`/employees?limit=100`),
+                    API.get(`/feedback/given/${id}`)
                 ]);
 
-                setEmployee(empRes.data);
-                setFeedbacks(feedRes.data);
-                setAvgRating(avgRes.data.averageRating || 0);
-                setAllEmployees(allRes.data.employees || []); // Extract from .employees
-                setIsLoading(false);
+                if (!ignore) {
+                    setEmployee(empRes.data);
+                    setFeedbacks(feedRes.data);
+                    setAvgRating(avgRes.data.averageRating || 0);
+                    setAllEmployees(allRes.data.employees || []);
+                    setGivenFeedbacks(givenRes.data);
+                    setIsLoading(false);
+                }
             } catch (err) {
-                console.error("Profile Fetch Error:", err);
-                if (err.response?.status === 404) {
-                    setNotFound(true);
-                } else {
-                    setError('Unable to load profile. Please ensure the backend is running.');
-                }
-                setIsLoading(false);
-            }
-        };
-        fetchData();
-    }, [id]);
+                if (!ignore) {
+                    console.error("Profile Fetch Error Detail:", {
+                        status: err.response?.status,
+                        data: err.response?.data,
+                        message: err.message
+                    });
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            if (id) {
-                try {
-                    const res = await API.get(`/feedback/given/${id}`);
-                    setGivenFeedbacks(res.data);
-                } catch (err) {
-                    console.error(err);
+                    if (err.response?.status === 404) {
+                        setNotFound(true);
+                    } else {
+                        setProfileError('Unable to load full profile data. Please try again.');
+                    }
+                    setIsLoading(false);
                 }
             }
         };
-        fetchUserData();
+
+        fetchData();
+        return () => { ignore = true; };
     }, [id]);
 
     const handleSubmit = async (e) => {
@@ -126,10 +127,10 @@ const ProfilePage = () => {
         </div>
     );
 
-    if (error && !employee) return (
+    if (profileError && !employee) return (
         <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>
             <h2 className="mb-4" style={{ color: 'var(--error)' }}>Connection Error</h2>
-            <p className="mb-4">{error}</p>
+            <p className="mb-4">{profileError}</p>
             <button onClick={() => window.location.reload()} className="btn-primary">Retry</button>
         </div>
     );
@@ -138,6 +139,11 @@ const ProfilePage = () => {
 
     return (
         <div className="container">
+            {profileError && (
+                <div className="card mb-4" style={{ border: '1px solid var(--error)', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--error)' }}>
+                    {profileError}
+                </div>
+            )}
             <button onClick={() => navigate('/')} className="mb-4 flex-between gap-2" style={{ background: 'none', color: 'var(--text-muted)' }}>
                 <ArrowLeft size={18} /> Back to Team
             </button>

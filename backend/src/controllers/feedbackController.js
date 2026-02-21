@@ -66,10 +66,17 @@ exports.getFeedbackGiven = async (req, res) => {
 
 exports.getAverageRating = async (req, res) => {
     try {
+        const mongoose = require('mongoose');
+        const employeeId = req.params.employeeId;
+
+        if (!mongoose.Types.ObjectId.isValid(employeeId)) {
+            return res.status(400).json({ message: "Invalid employee ID" });
+        }
+
         const result = await Feedback.aggregate([
             {
                 $match: {
-                    givenTo: new (require('mongoose').Types.ObjectId)(req.params.employeeId),
+                    givenTo: new mongoose.Types.ObjectId(employeeId),
                     isDeleted: { $ne: true }
                 }
             },
