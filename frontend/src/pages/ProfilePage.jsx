@@ -103,7 +103,14 @@ const ProfilePage = () => {
             setAvgRating(avgRes.data.averageRating || 0);
             setGivenFeedbacks(givenRes.data);
         } catch (err) {
-            setError(err.response?.data?.message || 'Error submitting feedback');
+            console.error("Submit Feedback Error:", err);
+            if (!err.response) {
+                setProfileError('Connection lost. Unable to submit feedback.');
+            } else if (err.response.status === 429) {
+                setError('Security: Too many requests. Please wait a minute.');
+            } else {
+                setError(err.response?.data?.message || 'Error submitting feedback');
+            }
         }
     };
 
@@ -115,7 +122,12 @@ const ProfilePage = () => {
             const avgRes = await API.get(`/feedback/average/${id}`);
             setAvgRating(avgRes.data.averageRating || 0);
         } catch (err) {
-            alert(err.response?.data?.message || 'Error deleting feedback');
+            console.error("Delete Feedback Error:", err);
+            if (!err.response) {
+                setProfileError('Connection lost. Unable to delete feedback.');
+            } else {
+                setError(err.response?.data?.message || 'Error deleting feedback');
+            }
         }
     };
 

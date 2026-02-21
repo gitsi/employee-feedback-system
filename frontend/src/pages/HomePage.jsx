@@ -91,7 +91,16 @@ const HomePage = () => {
             setShowCreateForm(false);
             fetchEmployees(1, debouncedTerm); // Fetch first page of search results
         } catch (err) {
-            setCreateError(err.response?.data?.message || 'Error creating employee');
+            console.error("Create Employee Error:", err);
+            if (!err.response) {
+                // Connection Error
+                setError('Unable to reach the server to create employee. Please try again.');
+                setShowCreateForm(false);
+            } else if (err.response.status === 429) {
+                setCreateError('Security: Too many requests. Please wait a bit.');
+            } else {
+                setCreateError(err.response?.data?.message || 'Error creating employee');
+            }
         }
     };
 
