@@ -3,10 +3,21 @@ const Employee = require('../models/Employee');
 exports.createEmployee = async (req, res) => {
     try {
         const { name, email, department } = req.body;
-        const employee = new Employee({ name, email, department });
+        const normalizedEmail = email.toLowerCase();
+
+        // Check for existing email to provide a cleaner error
+        const existing = await Employee.findOne({ email: normalizedEmail });
+        if (existing) {
+            return res.status(409).json({ message: "An employee with this email already exists" });
+        }
+
+        const employee = new Employee({ name, email: normalizedEmail, department });
         await employee.save();
         res.status(201).json(employee);
     } catch (err) {
+        if (err.code === 11000) {
+            return res.status(409).json({ message: "An employee with this email already exists" });
+        }
         res.status(400).json({ message: err.message });
     }
 };
