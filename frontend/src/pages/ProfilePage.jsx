@@ -21,13 +21,20 @@ const ProfilePage = () => {
     const [notFound, setNotFound] = useState(false);
 
     useEffect(() => {
+        setEmployee(null); // Clear previous profile to avoid "ghost" data
+        setFeedbacks([]);
+        setGivenFeedbacks([]);
         setFormData({ rating: 5, comment: '' });
         setSelectedRecipient('');
+        setError('');
+        setSuccess('');
         setNotFound(false);
         setIsLoading(true);
     }, [id]);
 
     useEffect(() => {
+        if (!id) return;
+
         const fetchData = async () => {
             try {
                 // Fetch specific employee and a list for the dropdown
@@ -44,7 +51,7 @@ const ProfilePage = () => {
                 setAllEmployees(allRes.data.employees || []); // Extract from .employees
                 setIsLoading(false);
             } catch (err) {
-                console.error(err);
+                console.error("Profile Fetch Error:", err);
                 if (err.response?.status === 404) {
                     setNotFound(true);
                 } else {
