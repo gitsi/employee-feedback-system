@@ -6,4 +6,7 @@ const EmployeeSchema = new mongoose.Schema({
     department: { type: String, required: true },
 }, { timestamps: true });
 
+// Add text index for optimized search
+EmployeeSchema.index({ name: 'text', department: 'text' });
+
 module.exports = mongoose.model('Employee', EmployeeSchema);
